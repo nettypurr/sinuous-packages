@@ -1,0 +1,34 @@
+{
+  "name": "sinuous-packages",
+  "version": "0.0.0",
+  "description": "Packages for Sinuous",
+  "keywords": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/nthm/sinuous-packages"
+  },
+  "author": "Gen Hames",
+  "scripts": {
+    "build": "npm run build:babel && npm run build:minify",
+    "build:babel": "babel --no-babelrc . --ignore 'node_modules' --out-dir dist --extensions \".ts\" --plugins=@babel/plugin-transform-typescript",
+    "build:minify": "terser dist/index.js --module --mangle --compress --output dist/index.min.js"
+  },
+  "dependencies": {
+    "sinuous": "^0.27.6",
+    "sinuous-trace": "file:sinuous-trace",
+    "sinuous-lifecycle": "file:sinuous-lifecycle"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-transform-typescript": "^7.10.3",
+    "terser": "^4.8.0",
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.22.0",
+    "typescript": "^3.9.5"
+  }
+}

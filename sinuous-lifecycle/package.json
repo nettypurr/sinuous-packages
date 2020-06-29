@@ -1,0 +1,18 @@
+{
+  "name": "sinuous-lifecycle",
+  "version": "0.1.0",
+  "description": "DOM lifecycles onAttach/onDetach for Sinuous",
+  "keywords": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/sinuous-lifecycle"
+  },
+  "author": "Gen Hames",
+  "main": "dist/index.min.js",
+  "type": "module",
+  "peerDependencies": {
+    "sinuous": "^0.27.6",
+    "sinuous-trace": "file:sinuous-trace"
+  }
+}
