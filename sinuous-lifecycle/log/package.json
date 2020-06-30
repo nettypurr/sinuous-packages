@@ -1,5 +1,5 @@
 {
-  "description": "Lifecycle wrapper function to log onAttach/onDetach calls",
+  "description": "Lifecycle plugin to log onAttach/onDetach calls",
   "license": "MIT",
   "repository": {
     "type": "git",
