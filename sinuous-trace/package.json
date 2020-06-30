@@ -9,7 +9,7 @@
     "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/sinuous-trace"
   },
   "author": "Gen Hames",
-  "main": "dist/index.min.js",
+  "main": "../esm/sinuous-trace.js",
   "type": "module",
   "peerDependencies": {
     "sinuous": "^0.27.6"
