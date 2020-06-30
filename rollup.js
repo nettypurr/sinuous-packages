@@ -1,4 +1,5 @@
-import typescript from '@rollup/plugin-typescript';
+import babel from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
 import bundleSize from 'rollup-plugin-size';
 import { terser } from 'rollup-plugin-terser';
 
@@ -17,18 +18,32 @@ const bundleFormats = ['esm', 'iife'];
  * @type {(input: string, format: ModuleFormat) => RollupOptions}
  */
 const hydrateBundleSnippet = (input, format) => {
-  const name = format === 'iife'
-    ? input.replace(/(?:-|\/)([a-z])/g, (_, char) => char.toUpperCase())
-    : undefined;
+  const name
+    = format === 'iife'
+      ? input.replace(/(?:-|\/)([a-z])/g, (_, char) => char.toUpperCase())
+      : undefined;
+
+  const extension
+    = format === 'iife'
+      ? 'min.js'
+      : 'js';
 
   return {
     input: `${input}/index.ts`,
     external: ['sinuous-trace', 'sinuous-lifecycle'],
     plugins: [
-      typescript(),
+      // typescript(),
+      resolve({
+        extensions: ['.js', '.ts'],
+      }),
+      babel({
+        babelHelpers: 'bundled',
+        plugins: ['@babel/plugin-transform-typescript'],
+        extensions: ['.js', '.ts'],
+      }),
     ],
     output: {
-      file: `dist/${format}/${input}.js`,
+      file: `dist/${input}/index.${extension}`,
       format,
       name,
       sourcemap: true,

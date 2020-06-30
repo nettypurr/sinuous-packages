@@ -2,7 +2,7 @@ import type { HyperscriptApi } from 'sinuous/h';
 import type { El, Tracers, RenderStackFrame, InstanceMeta } from 'sinuous-trace';
 
 import { trace } from 'sinuous-trace';
-import { createLogFunction } from './log.js';
+import { createLogFunction } from './logFunction.js';
 
 type LogTraceOptions = {
   maxArrayItems: number,
