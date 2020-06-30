@@ -10,7 +10,8 @@
   },
   "author": "Gen Hames",
   "scripts": {
-    "build": "rollup --config rollup.js --silent"
+    "build": "rollup --config rollup.js --silent",
+    "declarations": "tsc && bash -c 'for i in sinuous-{trace,lifecycle}/{,**/}*.d.ts; do mv $i dist/$i; echo dist/$i; done'"
   },
   "dependencies": {
     "sinuous": "^0.27.6",
