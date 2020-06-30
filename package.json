@@ -10,8 +10,11 @@
   },
   "author": "Gen Hames",
   "scripts": {
-    "build": "rollup --config rollup.js --silent",
-    "declarations": "tsc && bash -c 'for i in sinuous-{trace,lifecycle}/{,**/}*.d.ts; do mv $i dist/$i; echo dist/$i; done'"
+    "build": "npm run rollup && npm run dts",
+    "rollup": "rollup --config rollup.js --silent",
+    "dts": "tsc && npm run dts:mv && npm run dts:rm",
+    "dts:mv": "bash -c 'for i in sinuous-*/{,**/}index.d.ts; do mv -v $i dist/$i; done'",
+    "dts:rm": "bash -c 'for i in sinuous-*/{,**/}*.d.ts; do rm -v $i; done'"
   },
   "dependencies": {
     "sinuous": "^0.27.6",

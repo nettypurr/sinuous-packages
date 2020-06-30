@@ -8,6 +8,7 @@ const bundleInputs = [
   'sinuous-trace/log',
   'sinuous-lifecycle',
   'sinuous-lifecycle/log',
+  'sinuous-tree',
 ];
 
 /** @type {ModuleFormat[]} */
@@ -32,7 +33,6 @@ const hydrateBundleSnippet = (input, format) => {
     input: `${input}/index.ts`,
     external: ['sinuous-trace', 'sinuous-lifecycle'],
     plugins: [
-      // typescript(),
       resolve({
         extensions: ['.js', '.ts'],
       }),
