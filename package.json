@@ -13,7 +13,7 @@
     "build": "npm run rollup && npm run dts",
     "rollup": "rollup --config rollup.js --silent",
     "dts": "npm run clean:dts && tsc && npm run dts:rm-extras",
-    "dts:rm-extras": "bash -c 'rm -v $(find sinuous-* -name '*.d.ts' | grep -v index.d.ts)'",
+    "dts:rm-extras": "bash -c 'rm -v $(find sinuous-* -name '*.d.ts' | grep -v index.d.ts) || true'",
     "clean:dts": "bash -c 'rm -v sinuous-*/{,**/}*.d.ts || true'",
     "clean:all": "bash -c 'rm -v sinuous-*/{,**/}*.{d.ts,min.js,js,map} || true'"
   },
