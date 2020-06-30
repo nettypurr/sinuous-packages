@@ -26,12 +26,6 @@ const hydrateBundleSnippet = (input, format) => {
     external: ['sinuous-trace', 'sinuous-lifecycle'],
     plugins: [
       typescript(),
-      // nodeResolve(),
-      // babel({
-      //   babelHelpers: 'bundled',
-      //   plugins: ['@babel/plugin-transform-typescript'],
-      //   extensions: ['.js', '.ts'],
-      // }),
     ],
     output: {
       file: `dist/${format}/${input}.js`,
@@ -55,22 +49,10 @@ const hydrateBundleSnippet = (input, format) => {
           mangle: {},
         }),
       ],
-      strict:   false, // Remove `use strict;`
-      interop:  false, // Remove `r=r&&r.hasOwnProperty("default")?r.default:r;`
-      esModule: false, // Remove `esModule` property
+      strict: false, // Remove `use strict;`
     },
     watch: {
       clearScreen: false,
-    },
-    onwarn(warning) {
-      const skip = [
-        // Rollup correctly guesses the global name to be the `name` field
-        'MISSING_GLOBAL_NAME',
-        // All packages are external dependencies (in this case)
-        'UNRESOLVED_IMPORT',
-      ];
-      if (skip.includes(warning.code)) return;
-      console.error(warning.code, warning.message);
     },
   };
 };
