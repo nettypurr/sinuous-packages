@@ -9,7 +9,7 @@
     "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/sinuous-lifecycle"
   },
   "author": "Gen Hames",
-  "main": "../esm/sinuous-lifecycle.js",
+  "main": "index.ts",
   "type": "module",
   "peerDependencies": {
     "sinuous": "^0.27.6",
