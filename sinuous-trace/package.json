@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/sinuous-trace"
+    "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-trace"
   },
   "author": "Gen Hames",
   "main": "index.js",
