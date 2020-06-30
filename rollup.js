@@ -43,7 +43,7 @@ const hydrateBundleSnippet = (input, format) => {
       }),
     ],
     output: {
-      file: `dist/${input}/index.${extension}`,
+      file: `${input}/index.${extension}`,
       format,
       name,
       sourcemap: true,

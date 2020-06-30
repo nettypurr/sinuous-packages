@@ -1,2 +1,5 @@
 node_modules
-dist
+sinuous-*/**/*.min.js
+sinuous-*/**/*.js
+sinuous-*/**/*.map
+sinuous-*/**/*.d.ts

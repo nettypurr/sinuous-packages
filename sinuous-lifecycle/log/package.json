@@ -5,6 +5,7 @@
     "type": "git",
     "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/sinuous-lifecycle"
   },
-  "main": "index.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "type": "module"
 }

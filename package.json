@@ -12,9 +12,10 @@
   "scripts": {
     "build": "npm run rollup && npm run dts",
     "rollup": "rollup --config rollup.js --silent",
-    "dts": "tsc && npm run dts:mv && npm run dts:rm",
-    "dts:mv": "bash -c 'for i in sinuous-*/{,**/}index.d.ts; do mv -v $i dist/$i; done'",
-    "dts:rm": "bash -c 'for i in sinuous-*/{,**/}*.d.ts; do rm -v $i; done'"
+    "dts": "npm run clean:dts && tsc && npm run dts:rm-extras",
+    "dts:rm-extras": "bash -c 'rm -v $(find sinuous-* -name '*.d.ts' | grep -v index.d.ts)'",
+    "clean:dts": "bash -c 'rm -v sinuous-*/{,**/}*.d.ts || true'",
+    "clean:all": "bash -c 'rm -v sinuous-*/{,**/}*.{d.ts,min.js,js,map} || true'"
   },
   "dependencies": {
     "sinuous": "^0.27.6",
