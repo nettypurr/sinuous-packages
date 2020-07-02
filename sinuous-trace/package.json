@@ -1,6 +1,6 @@
 {
   "name": "sinuous-trace",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Trace components from Sinuous into a WeakMap tree",
   "keywords": [],
   "license": "MIT",
