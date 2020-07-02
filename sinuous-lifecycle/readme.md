@@ -1,6 +1,6 @@
 # Sinuous onAttach/onDetach DOM lifecycles
 
-Write lifecycles in Sinuous:
+Write lifecycles in [Sinuous][1]:
 
 ```tsx
 import { h, observable } from 'sinuous';
@@ -23,9 +23,9 @@ const YourComponent = () => {
 ```
 
 UI libraries that work with the DOM instead of a virtual DOM often don't have a
-centralized render loop to know when a component [`isConnected`][1]. Instead,
-often a [`MutationObserver`][2] is used for these events as seen in packages
-like [disconnected][3] and [disco][4]; written for hyperHTML and Sinuous,
+centralized render loop to know when a component [`isConnected`][2]. Instead,
+often a [`MutationObserver`][3] is used for these events as seen in packages
+like [disconnected][4] and [disco][5]; written for hyperHTML and Sinuous,
 respectively.
 
 This works, but has very questionable performance and the API isn't personally
@@ -34,16 +34,16 @@ browser's implementation, it sounds expensive to ask to observe _all_ `document`
 changes. Instead, this package does the bookkeeping necessary to provide
 lifecycles without a `MutationObserver`.
 
-In `sinuous-trace`, internal Sinuous API calls are wrapped to track component
-element creation, adoption, and removal. This is stored in a `WeakMap` tree
-following all component relations. This means `sinuous-lifecycle` can plug into
-those events and check whether the parent/child will change their connection to
-the DOM, providing the onAttach/onDetach lifecycles.
+In [`sinuous-trace`][6], Sinuous API calls are wrapped to capture component
+element creation, adoption, and removal. This is stored in a `WeakMap` tree to
+hold all component relations. This means `sinuous-lifecycle` can plug into those
+events and check whether the parent/child will change their connection to the
+DOM, providing the onAttach/onDetach lifecycles.
 
 ## Setup
 
 You extend the Sinuous API yourself when initializing your application. This is
-explained in the Sinuous [internal API documentation][5]
+explained in the Sinuous [internal API documentation][7]
 
 Here's how to setup Sinuous for tracing and lifecycles. Run this before using
 any Sinuous calls:
@@ -108,8 +108,10 @@ lifecyclePlugin.callTree('onAttach', renderedApp);
 api.add(document.querySelector('#root'), <App/>)
 ```
 
-[1]: https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
-[2]: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-[3]: https://github.com/WebReflection/disconnected
-[4]: https://github.com/luwes/disco
-[5]: https://github.com/luwes/sinuous#internal-api
+[1]: https://sinuous.dev
+[2]: https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
+[3]: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+[4]: https://github.com/WebReflection/disconnected
+[5]: https://github.com/luwes/disco
+[6]: https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-trace
+[7]: https://github.com/luwes/sinuous#internal-api
