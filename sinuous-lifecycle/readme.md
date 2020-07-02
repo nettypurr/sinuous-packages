@@ -24,18 +24,18 @@ const YourComponent = () => {
 
 UI libraries that work with the DOM instead of a virtual DOM often don't have a
 centralized render loop to know when a component [`isConnected`][1]. Instead,
-often a [`MutationObserver()`][2] is used for these events as seen in packages
+often a [`MutationObserver`][2] is used for these events as seen in packages
 like [disconnected][3] and [disco][4]; written for hyperHTML and Sinuous,
 respectively.
 
 This works, but has very questionable performance and the API isn't personally
-as intuitive as say, React's `componentWillMount()`. Even without knowing the
+as intuitive as say, React's `componentWillMount`. Even without knowing the
 browser's implementation, it sounds expensive to ask to observe _all_ `document`
 changes. Instead, this package does the bookkeeping necessary to provide
-lifecycles without a `MutationObserver()`.
+lifecycles without a `MutationObserver`.
 
 In `sinuous-trace`, internal Sinuous API calls are wrapped to track component
-element creation, adoption, and removal. This is stored in a `WeakMap()` tree
+element creation, adoption, and removal. This is stored in a `WeakMap` tree
 following all component relations. This means `sinuous-lifecycle` can plug into
 those events and check whether the parent/child will change their connection to
 the DOM, providing the onAttach/onDetach lifecycles.
@@ -83,7 +83,7 @@ provided `lifecyclePlugin.callTree()` as needed.
 
 This works through bookkeeping. The internal Sinuous API has its execution
 traced to determine what action to take. _This means you have to use Sinuous_.
-In `MutationObserver()`, you can  run DOM APIs directly (i.e `appendChild()`) or
+In `MutationObserver`, you can  run DOM APIs directly (i.e `appendChild()`) or
 mix and match libraries like using jQuery now and then.
 
 _This won't work in this library. You must use the Sinuous API_. If you use
