@@ -1,5 +1,11 @@
 # Sinuous onAttach/onDetach DOM lifecycles
 
+![badge:min+gzip](https://img.badgesize.io/https://unpkg.com/sinuous-lifecycle/index.js?compression=gzip&label=min%2Bgzip&style=flat-square)
+![badge:min](https://img.badgesize.io/https://unpkg.com/sinuous-lifecycle/index.js?label=min&style=flat-square)
+![badge:npm-v](https://flat.badgen.net/npm/v/sinuous-lifecycle)
+![badge:npm-license](https://flat.badgen.net/npm/license/sinuous-lifecycle)
+![badge:npm-types](https://flat.badgen.net/npm/types/sinuous-lifecycle)
+
 Write lifecycles in [Sinuous][1]:
 
 ```tsx
@@ -52,16 +58,10 @@ any Sinuous calls:
 import { api } from 'sinuous'; // 'sinuous/h' if using JSX
 import { trace } from 'sinuous-trace';
 import { lifecyclePlugin } from 'sinuous-lifecycle';
-import { logTrace } from 'sinuous-trace/log';
-import { logLifecycle } from 'sinuous-lifecycle/log';
 
 const tracers = trace.setup(api);
 // This wires up onAttach/onDetach to run automatically
 lifecyclePlugin(api, tracers);
-
-// Optional logging to browser console. Notable performance hit but helpful
-logTrace(api, tracers);
-logLifecycle(lifecyclePlugin);
 
 // Export lifecycle setters however you like
 // Alternatively write directly to the Sinuous API as `api.hooks = {...}`
@@ -109,6 +109,31 @@ lifecyclePlugin.callTree('onAttach', renderedApp);
 ```tsx
 api.add(document.querySelector('#root'), <App/>)
 ```
+
+## Logging / Debugging
+
+![badge:min+gzip](https://img.badgesize.io/https://unpkg.com/sinuous-lifecycle/log/index.js?compression=gzip&label=min%2Bgzip&style=flat-square)
+![badge:min](https://img.badgesize.io/https://unpkg.com/sinuous-lifecycle/log/index.js?label=min&style=flat-square)
+
+This package includes an optional log package at `sinuous-lifecycle/log`. Here's
+an example to setup the browser console logging, extending the above example.
+
+```ts
+// ... All imports previously used
+import { logTrace } from 'sinuous-trace/log';
+import { logLifecycle } from 'sinuous-lifecycle/log';
+
+const tracers = trace.setup(api);
+lifecyclePlugin(api, tracers);
+
+// Add these lines
+logTrace(api, tracers);
+logLifecycle(lifecyclePlugin);
+```
+
+There's a notable performance hit when the browser console is open, but does
+show all lifecycle calls including the root tree element and the total call
+count.
 
 [1]: https://sinuous.dev
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
