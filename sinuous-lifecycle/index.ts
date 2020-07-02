@@ -3,24 +3,28 @@ import type { El, Tracers } from 'sinuous-trace';
 
 import { trace } from 'sinuous-trace';
 
-type Lifecycle =
-  | 'onAttach'
-  | 'onDetach'
+// Use declare merging / module augmentation (seen below) to extend this
+interface Lifecycle {
+  onAttach: () => void
+  onDetach: () => void
+}
 
-type LifecyclePlugin = {
+interface LifecyclePlugin {
   (api: HyperscriptApi, tracers: Tracers): void
   // This is a separate method to support the log plugin
-  callTree(fn: Lifecycle, root: El): void
+  callTree(fn: keyof Lifecycle, root: El): void
+  setLifecycle(fn: keyof Lifecycle, callback: () => void): void
 }
 
 declare module 'sinuous-trace' {
   interface RenderStackFrame {
-    lifecycles?: { [k in Lifecycle]?: () => void }
+    lifecycles?: Partial<Lifecycle>
   }
 }
 
 let childAlreadyConnected: boolean | undefined = undefined;
 
+/** Wires up onAttach/onDetach lifecycles to run automatically */
 const lifecyclePlugin: LifecyclePlugin = (api, tracers) => {
   const { add } = api;
   const { add: { onAttach }, rm: { onDetach } } = tracers;
@@ -43,16 +47,25 @@ const lifecyclePlugin: LifecyclePlugin = (api, tracers) => {
   };
 };
 
-// Depth-first-traversal of components
-lifecyclePlugin.callTree = (fn: Lifecycle, root: Node): void => {
-  const meta = trace.meta.get(root as El);
+/** Recursively run the lifecycles of a component and its children */
+lifecyclePlugin.callTree = (fn, root) => {
+  const meta = trace.meta.get(root);
   // Terser throws
   // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
   const call = meta && meta.lifecycles && meta.lifecycles[fn];
   if (call) call();
-  const children = trace.tree.get(root as El);
+  const children = trace.tree.get(root);
   if (children && children.size > 0)
     children.forEach(c => lifecyclePlugin.callTree(fn, c));
+  // Note this is depth-first traversal
+};
+
+/** Bind the lifecycle function into the actively rendering component */
+lifecyclePlugin.setLifecycle = (fn, callback) => {
+  // Throws if there's no component rendering (stack empty)
+  const rsf = trace.stack[trace.stack.length - 1];
+  if (!rsf.lifecycles) rsf.lifecycles = {};
+  rsf.lifecycles[fn] = callback;
 };
 
 export { Lifecycle, LifecyclePlugin }; // Types
