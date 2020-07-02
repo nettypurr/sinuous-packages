@@ -76,8 +76,10 @@ export const hooks = {
 };
 ```
 
-Note that only onAttach/onDetach run automatically - you'll have to call the
-provided `lifecyclePlugin.callTree()` as needed.
+Note that only onAttach/onDetach run automatically - any custom lifecycles will
+have to have `lifecyclePlugin.callTree()` called as needed. If you write in
+Typescript, use declaration merging (module augmentation) to extend the module's
+`Lifecycle` interface.
 
 ## Limitations
 
