@@ -3,7 +3,7 @@ import { trace } from 'sinuous-trace';
 import type { El } from 'sinuous-trace';
 import type { Lifecycle, LifecyclePlugin } from 'sinuous-lifecycle';
 
-type LogLifecycleCSS = { [k in Lifecycle]: string }
+type LogLifecycleCSS = { [k in keyof Lifecycle]: string }
 
 const defaultCSS: LogLifecycleCSS = {
   onAttach: 'background: #A6E2B3', // Green
@@ -17,12 +17,12 @@ function logLifecycle(
   const { callTree } = lifecyclePlugin;
 
   const css: LogLifecycleCSS = Object.assign(defaultCSS, consoleCSS);
-  const c = (fn: Lifecycle, extra = '') => [`%c${fn}${extra}`, `${css[fn]}`];
+  const c = (k: keyof Lifecycle, extra = '') => [`%c${k}${extra}`, `${css[k]}`];
 
   let callCount = 0;
   let root: El | undefined = undefined;
 
-  lifecyclePlugin.callTree = (fn: Lifecycle, el: El) => {
+  lifecyclePlugin.callTree = (fn, el) => {
     const meta = trace.meta.get(el);
     const compStr = meta ? `<${meta.name}/>` : el;
     const entryCall = !root;
