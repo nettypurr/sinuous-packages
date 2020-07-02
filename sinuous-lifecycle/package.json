@@ -1,7 +1,7 @@
 {
   "name": "sinuous-lifecycle",
   "version": "1.0.1",
-  "description": "DOM lifecycles onAttach/onDetach for Sinuous",
+  "description": "Sinuous onAttach/onDetach DOM lifecycles",
   "keywords": [],
   "license": "MIT",
   "repository": {
