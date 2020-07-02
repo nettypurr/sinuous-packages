@@ -1,13 +1,32 @@
 # Recording component relationships in Sinuous
 
+![badge:min+gzip](https://img.badgesize.io/https://unpkg.com/sinuous-trace/index.js?compression=gzip&label=min%2Bgzip&style=flat-square)
+![badge:min](https://img.badgesize.io/https://unpkg.com/sinuous-trace/index.js?label=min&style=flat-square)
+![badge:npm-v](https://flat.badgen.net/npm/v/sinuous-trace)
+![badge:npm-license](https://flat.badgen.net/npm/license/sinuous-trace)
+![badge:npm-types](https://flat.badgen.net/npm/types/sinuous-trace)
+
 This library traces the [Sinuous][1] API to record component creation, adoption,
 and removal. This forms a component tree stored in a `WeakMap` of all live
 components.
 
+## Setup
+
+You extend the Sinuous API yourself when initializing your application. This is
+explained in the Sinuous [internal API documentation][2].
+
+```ts
+import { api } from 'sinuous'; // 'sinuous/h' if using JSX
+import { trace } from 'sinuous-trace';
+
+const tracers = trace.setup(api);
+// The `tracers` object is used to extend with plugins like `sinuous-lifecycle`
+```
+
 ## Uses
 
 You can lookup relationships. You can also store data per component instance and
-then refer to it later. Both concepts are used in [`sinuous-lifecycle`][2] to
+then refer to it later. Both concepts are used in [`sinuous-lifecycle`][3] to
 provide onAttach/onDetach lifecycles to components.
 
 I also personally use it to track what observables a component uses during
@@ -58,5 +77,27 @@ have thounsands of components in a complex application - at that point these
 types of considerations will have to be made regardless of your UI library,
 especially in VDOMs like React.
 
+## Logging / Debugging
+
+![badge:min+gzip](https://img.badgesize.io/https://unpkg.com/sinuous-trace/log/index.js?compression=gzip&label=min%2Bgzip&style=flat-square)
+![badge:min](https://img.badgesize.io/https://unpkg.com/sinuous-trace/log/index.js?label=min&style=flat-square)
+
+This package includes an optional log package at `sinuous-trace/log`. It logs
+all (seriously, _every_) API call in Sinuous. It's a lot of noise but it shows
+you how your application is being executed.
+
+```ts
+import { api } from 'sinuous'; // 'sinuous/h' if using JSX
+import { trace } from 'sinuous-trace';
+import { logTrace } from 'sinuous-trace/log';
+
+const tracers = trace.setup(api);
+// Add this
+logTrace(api, tracers);
+```
+
+There's a notable performance hit when the browser console is open.
+
 [1]: https://sinuous.dev
-[2]: https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-lifecycle
+[2]: https://github.com/luwes/sinuous#internal-api
+[3]: https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-lifecycle

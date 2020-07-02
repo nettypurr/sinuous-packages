@@ -49,7 +49,7 @@ DOM, providing the onAttach/onDetach lifecycles.
 ## Setup
 
 You extend the Sinuous API yourself when initializing your application. This is
-explained in the Sinuous [internal API documentation][7]
+explained in the Sinuous [internal API documentation][7].
 
 Here's how to setup Sinuous for tracing and lifecycles. Run this before using
 any Sinuous calls:
