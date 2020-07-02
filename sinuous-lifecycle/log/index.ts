@@ -34,7 +34,7 @@ function logLifecycle(
     }
     // Terser throws
     // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-    const call = meta && meta.lifecycles && meta.lifecycles[fn];
+    const call = meta && meta.lifecycle && meta.lifecycle[fn];
     if (call) console.log(...c(fn), `(${++callCount})`, compStr, call);
     callTree(fn, el);
 

@@ -18,7 +18,7 @@ interface LifecyclePlugin {
 
 declare module 'sinuous-trace' {
   interface RenderStackFrame {
-    lifecycles?: Partial<Lifecycle>
+    lifecycle?: Partial<Lifecycle>
   }
 }
 
@@ -52,7 +52,7 @@ lifecyclePlugin.callTree = (fn, root) => {
   const meta = trace.meta.get(root);
   // Terser throws
   // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-  const call = meta && meta.lifecycles && meta.lifecycles[fn];
+  const call = meta && meta.lifecycle && meta.lifecycle[fn];
   if (call) call();
   const children = trace.tree.get(root);
   if (children && children.size > 0)
@@ -64,8 +64,8 @@ lifecyclePlugin.callTree = (fn, root) => {
 lifecyclePlugin.setLifecycle = (fn, callback) => {
   // Throws if there's no component rendering (stack empty)
   const rsf = trace.stack[trace.stack.length - 1];
-  if (!rsf.lifecycles) rsf.lifecycles = {};
-  rsf.lifecycles[fn] = callback;
+  if (!rsf.lifecycle) rsf.lifecycle = {};
+  rsf.lifecycle[fn] = callback;
 };
 
 export { Lifecycle, LifecyclePlugin }; // Types
