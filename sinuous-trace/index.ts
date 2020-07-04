@@ -1,4 +1,4 @@
-import type { HyperscriptApi } from 'sinuous/h';
+import { api } from 'sinuous';
 
 // Must be an interface; type doesn't work for module augmentation
 interface RenderStackFrame { name: string }
@@ -19,8 +19,26 @@ const meta: WeakMap<El, InstanceMeta> = new WeakMap();
 // the component children can be re-parented to a parent component later on.
 // Every component is in the tree, even those with no children.
 
-const api = {} as HyperscriptApi;
 const emptyFn = () => {};
+const tracers = {
+  onCreate: emptyFn as (fn: () => El, el: El) => void,
+  onAttach: emptyFn as (parent: El, child: El) => void,
+  onDetach: emptyFn as (parent: El, child: El) => void,
+};
+
+// Save previous API values
+const { h, add, rm } = api;
+
+const trace = (): void => {
+  api.h = hTracer;
+  api.add = addTracer;
+  api.rm = rmTracer;
+};
+trace.tracers = tracers;
+trace.stack = stack;
+trace.tree = tree;
+trace.meta = meta;
+
 // For sharing fragments between nested h() and add() calls
 const refDF: DocumentFragment[] = [];
 
@@ -33,17 +51,16 @@ const searchForAdoptiveParent = (start: El) => {
   return document.body;
 };
 
-type hTracer = typeof api.h & { onCreate(fn: () => El, el: El): void }
-const h: hTracer = (...args) => {
+const hTracer: typeof api.h = (...args) => {
   const fn = args[0] as () => El;
   if (typeof fn !== 'function') {
-    const retH = api.h(...args);
+    const retH = h(...args);
     if (retH instanceof DocumentFragment) refDF.push(retH);
     return retH;
   }
   const renderData = { name: fn.name } as RenderStackFrame;
   stack.push(renderData);
-  const el = api.h(...args);
+  const el = h(...args);
   stack.pop();
 
   // Not Element or DocumentFragment
@@ -55,17 +72,15 @@ const h: hTracer = (...args) => {
   // Register as a component
   meta.set(el, renderData);
 
-  h.onCreate(fn, el);
+  tracers.onCreate(fn, el);
   return el;
 };
-h.onCreate = emptyFn;
 
 // Sinuous' api.add isn't purely a subcall of api.h. If given an array, it will
 // call api.h again to create a fragment (never returned). To see the fragment
 // here, tracer.h sets refDF. It's empty since insertBefore() clears child nodes
-type addTracer = typeof api.add & { onAttach(parent: El, child: El): void }
-const add: addTracer = (parent: El, value: El, endMark) => {
-  const ret = api.add(parent, value, endMark);
+const addTracer: typeof api.add = (parent: El, value: El, endMark) => {
+  const ret = add(parent, value, endMark);
   if (Array.isArray(value) && refDF.length)
     value = refDF.pop() as DocumentFragment;
   if (!(value instanceof Node)) {
@@ -98,43 +113,23 @@ const add: addTracer = (parent: El, value: El, endMark) => {
       else tree.set(parent, children); // parent === <body/>
     }
   }
-  add.onAttach(parent, value);
+  tracers.onAttach(parent, value);
   // Delete _after_ attaching. Value wasn't a component
   if (!valueComp) tree.delete(value);
   return ret;
 };
-add.onAttach = emptyFn;
 
-type rmTracer = typeof api.rm & { onDetach(parent: El, child: El): void }
-const rm: rmTracer = (parent, start, end) => {
+const rmTracer: typeof api.rm = (parent, start, end) => {
   // Parent registered in the tree is possibly different than the DOM parent
   const treeParent = searchForAdoptiveParent(start);
   const children = tree.get(treeParent);
   if (children)
     for (let c: Node | null = start; c && c !== end; c = c.nextSibling) {
       children.delete(c);
-      rm.onDetach(treeParent, c);
+      tracers.onDetach(treeParent, c);
     }
-  return api.rm(parent, start, end);
-};
-rm.onDetach = emptyFn;
-
-// Avoid writing tracers wrapper functions by swapping out the api on load
-type Tracers = { h: hTracer, add: addTracer, rm: rmTracer };
-const setup = (live: HyperscriptApi): Tracers => {
-  api.h = live.h;
-  live.h = h;
-
-  api.add = live.add;
-  live.add = add;
-
-  api.rm = live.rm;
-  live.rm = rm;
-
-  return { h, add, rm };
+  return rm(parent, start, end);
 };
 
-const trace = { setup, stack, tree, meta };
-
-export { El, RenderStackFrame, InstanceMeta, Tracers }; // Types
+export { RenderStackFrame, InstanceMeta }; // Types
 export { trace };

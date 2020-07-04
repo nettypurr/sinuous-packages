@@ -1,8 +1,8 @@
-import type { HyperscriptApi } from 'sinuous/h';
-import type { El, Tracers, RenderStackFrame, InstanceMeta } from 'sinuous-trace';
-
+import { api } from 'sinuous';
 import { trace } from 'sinuous-trace';
 import { createLogFunction } from './logFunction.js';
+
+import type { RenderStackFrame, InstanceMeta } from 'sinuous-trace';
 
 type LogTraceOptions = {
   maxArrayItems: number,
@@ -18,15 +18,12 @@ const defaultOptions: LogTraceOptions = {
 };
 
 let refRSF: RenderStackFrame | undefined;
-let initialParentDuringAdd: El | undefined;
+let initialParentDuringAdd: Element | DocumentFragment | Node | undefined;
 
-function logTrace(
-  api: HyperscriptApi,
-  tracers: Tracers,
-  options: Partial<LogTraceOptions> = {}
-): void {
+function logTrace(options: Partial<LogTraceOptions> = {}): void {
+  const { tracers } = trace;
+  const { onCreate, onAttach, onDetach } = tracers;
   const { h, add, insert, property, rm } = api;
-  const { h: { onCreate }, add: { onAttach }, rm: { onDetach } } = tracers;
 
   const opts: LogTraceOptions = Object.assign(defaultOptions, options);
   const log = createLogFunction(opts);
@@ -45,7 +42,7 @@ function logTrace(
     }
     return h(fn, ...args);
   };
-  tracers.h.onCreate = (_, el) => {
+  tracers.onCreate = (_, el) => {
     refRSF = trace.meta.get(el) as InstanceMeta;
     const { name } = refRSF;
     if (!(el instanceof Node)) {
@@ -70,7 +67,7 @@ function logTrace(
     console.groupEnd();
     return retAdd;
   };
-  tracers.add.onAttach = (parent, child) => {
+  tracers.onAttach = (parent, child) => {
     const msg = `Tree attach: ${log(parent)} receives ${log(child)}`;
     console.log(
       parent === initialParentDuringAdd
@@ -103,7 +100,7 @@ function logTrace(
     console.groupEnd();
     return retRm;
   };
-  tracers.rm.onDetach = (parent, child) => {
+  tracers.onDetach = (parent, child) => {
     console.log(`Tree detach: ${log(parent)} unlinks ${log(child)}`);
     onDetach(parent, child);
   };

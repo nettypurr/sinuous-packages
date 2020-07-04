@@ -1,28 +1,35 @@
 import { trace } from 'sinuous-trace';
+import { lifecycle } from 'sinuous-lifecycle';
 
-import type { El } from 'sinuous-trace';
-import type { Lifecycle, LifecyclePlugin } from 'sinuous-lifecycle';
+import type { LifecycleMethods } from 'sinuous-lifecycle';
 
-type LogLifecycleCSS = { [k in keyof Lifecycle]: string }
+type LogLifecycleStyle = { [k in keyof LifecycleMethods]: string }
+type LogLifecycleOptions = {
+  consoleStyle: LogLifecycleStyle
+}
 
-const defaultCSS: LogLifecycleCSS = {
-  onAttach: 'background: #A6E2B3', // Green
-  onDetach: 'background: #F4A89A', // Red
+const defaultOptions: LogLifecycleOptions = {
+  consoleStyle: {
+    onAttach: 'background: #A6E2B3', // Green
+    onDetach: 'background: #F4A89A', // Red
+  },
 };
 
-function logLifecycle(
-  lifecyclePlugin: LifecyclePlugin,
-  consoleCSS: Partial<LogLifecycleCSS> = {}
-): void {
-  const { callTree } = lifecyclePlugin;
+function logLifecycle(options: Partial<LogLifecycleOptions> = {}): void {
+  const { callTree } = lifecycle;
 
-  const css: LogLifecycleCSS = Object.assign(defaultCSS, consoleCSS);
-  const c = (k: keyof Lifecycle, extra = '') => [`%c${k}${extra}`, `${css[k]}`];
+  const css: LogLifecycleStyle = Object.assign(
+    defaultOptions.consoleStyle,
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    options.consoleStyle || {}
+  );
+  const c = (lifecycleName: keyof LifecycleMethods, extraText = '') =>
+    [`%c${lifecycleName}${extraText}`, `${css[lifecycleName]}`];
 
   let callCount = 0;
-  let root: El | undefined = undefined;
+  let root: Element | DocumentFragment | Node | undefined = undefined;
 
-  lifecyclePlugin.callTree = (fn, el) => {
+  lifecycle.callTree = (fn, el) => {
     const meta = trace.meta.get(el);
     const compStr = meta ? `<${meta.name}/>` : el;
     const entryCall = !root;
