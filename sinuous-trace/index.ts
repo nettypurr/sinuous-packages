@@ -34,6 +34,9 @@ const trace = (api: HyperscriptApi): void => {
   api.add = add;
   api.rm = rm;
 };
+// Backwards compatibility - remove in 2.0.0
+trace.setup = trace;
+
 trace.tracers = tracers;
 trace.stack = stack;
 trace.tree = tree;
