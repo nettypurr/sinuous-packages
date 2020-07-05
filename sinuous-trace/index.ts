@@ -1,4 +1,4 @@
-import { HyperscriptApi } from 'sinuous/h';
+import type { HyperscriptApi } from 'sinuous/h';
 
 // Must be an interface; type doesn't work for module augmentation
 interface RenderStackFrame { name: string }
