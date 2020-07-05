@@ -31,7 +31,7 @@ const hydrateBundleSnippet = (input, format) => {
 
   return {
     input: `${input}/index.ts`,
-    external: ['sinuous', 'sinuous-trace', 'sinuous-lifecycle'],
+    external: ['sinuous-trace', 'sinuous-lifecycle'],
     plugins: [
       resolve({
         extensions: ['.js', '.ts'],
