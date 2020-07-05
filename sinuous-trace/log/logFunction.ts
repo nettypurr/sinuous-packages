@@ -2,20 +2,19 @@ import type { Trace } from 'sinuous-trace';
 import type { LogTraceOptions } from 'sinuous-trace/log';
 
 // Placeholders to be filled in createLogFunction()
-const ref = {} as {
-  trace: Trace,
-  options: LogTraceOptions,
-};
+
+const traceRef = {} as Trace;
+const optionsRef = {} as LogTraceOptions;
 
 // If log() called inside log()
 let subcall = false;
 
 const limitedList = (head: string, children: unknown[]) => {
   let tail = '';
-  const extra = children.length - ref.options.maxArrayItems;
+  const extra = children.length - optionsRef.maxArrayItems;
   if (extra > 0) {
     tail = `,(...+${extra} items)`;
-    children = children.slice(0, ref.options.maxArrayItems);
+    children = children.slice(0, optionsRef.maxArrayItems);
   }
   subcall = true;
   const str = `${head}[${children.map(log).join(',')}${tail}]`;
@@ -25,19 +24,19 @@ const limitedList = (head: string, children: unknown[]) => {
 
 const limitedString = (str: string) => {
   str = str.trim();
-  const extra = str.length - ref.options.maxStringLength;
+  const extra = str.length - optionsRef.maxStringLength;
   return extra > 0
-    ? `"${str.slice(0, ref.options.maxStringLength)}(...+${extra} chars)"`
+    ? `"${str.slice(0, optionsRef.maxStringLength)}(...+${extra} chars)"`
     : `"${str}"`;
 };
 
 // Props and attributes are not currently serialized
 const serializeNode = (node: Node) => {
-  const isComp = ref.trace.meta.get(node);
+  const isComp = traceRef.meta.get(node);
   if (isComp)
     return `<${isComp.name}/>`;
 
-  const isGuard = ref.trace.tree.get(node);
+  const isGuard = traceRef.tree.get(node);
   const elName = node instanceof Element
     ? `<${node.tagName.toLowerCase()}>`
     : '[Fragment]';
@@ -92,8 +91,8 @@ const log = (x: unknown): string => {
 };
 
 const createLogFunction = (trace: Trace, options: LogTraceOptions): typeof log => {
-  ref.trace = trace;
-  ref.options = options;
+  Object.assign(traceRef, trace);
+  Object.assign(optionsRef, options);
   return log;
 };
 
