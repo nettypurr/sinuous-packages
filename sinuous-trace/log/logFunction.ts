@@ -94,8 +94,6 @@ const log = (x: unknown): string => {
 const createLogFunction = (trace: Trace, options: LogTraceOptions): typeof log => {
   ref.trace = trace;
   ref.options = options;
-  // TODO:
-  // Object.assign(ref, { trace, options });
   return log;
 };
 
