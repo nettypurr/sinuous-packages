@@ -16,12 +16,33 @@ You extend the Sinuous API yourself when initializing your application. This is
 explained in the Sinuous [internal API documentation][2].
 
 ```ts
-import { api } from 'sinuous'; // 'sinuous/h' if using JSX
+import { api } from 'sinuous';
 import { trace } from 'sinuous-trace';
 
-const tracers = trace.setup(api);
-// The `tracers` object is used to extend with plugins like `sinuous-lifecycle`
+trace(api);
 ```
+
+Note that this replaces methods on the Sinuous API object with ones that will
+call the original method internally. You must call this in your entrypoint
+before Sinuous is run.
+
+### Hot Module Reloading
+
+If you're using HMR you must be sure to only run `trace(api)` once or you'll
+receive _"Too much recursion"_ or _"Maximum call stack size exceeded"_ because
+the function will call itself instead of Sinuous' API.
+
+```ts
+// In using Parcel/Webpack HMR (or a CodeSandbox)
+if (!window.sinuousSetup) {
+  window.sinuousSetup = true;
+  trace(api);
+}
+```
+
+Just mark that you've done the operation so it's not done again. I use `window`
+as an example but it doesn't matter where you store the marker as long as it's
+outside of the module to being hot reloaded.
 
 ## Uses
 
@@ -43,7 +64,7 @@ nodes outside of Sinuous (and its API) you'll be hiding operations.
 
 Use `h()`, `api.add()`, and `api.rm()` instead of more manual ways of handling
 components (or using other libraries like jQuery). If you use Sinuous normally
-you'll be fine. For instance,
+you'll be fine. For instance:
 
 ```tsx
 const Page = () =>
@@ -86,17 +107,34 @@ This package includes an optional log package at `sinuous-trace/log`. It logs
 all (seriously, _every_) API call in Sinuous. It's a lot of noise but it shows
 you how your application is being executed.
 
+There's a notable performance hit when the browser console is open.
+
 ```ts
-import { api } from 'sinuous'; // 'sinuous/h' if using JSX
+import { api } from 'sinuous';
 import { trace } from 'sinuous-trace';
 import { logTrace } from 'sinuous-trace/log';
 
-const tracers = trace.setup(api);
-// Add this
-logTrace(api, tracers);
+trace(api);
+logTrace(api, trace /*, options: LogTraceOptions */);
 ```
 
-There's a notable performance hit when the browser console is open.
+> If using HMR you have to make sure this only runs once. This is documented in
+> above in the setup section.
+
+Options: (Defaults shown)
+
+```ts
+const options: LogTraceOptions = {
+  // Items to display of an array before saying "...(+N more)"
+  maxArrayItems: 3,
+  // Characters to display of a string before saying "...(+N more)"
+  maxStringLength: 10,
+  // Dataset key for writing the component name into a DOM node
+  // i.e `<h1 data-[componentDatasetTag]="MyComponent"></h1>`
+  // Empty string disables this
+  componentDatasetTag: 'component',
+};
+```
 
 [1]: https://sinuous.dev
 [2]: https://github.com/luwes/sinuous#internal-api

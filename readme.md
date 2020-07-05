@@ -28,11 +28,12 @@ Directly in your HTML:
 
 ## Building
 
-Output files are places alongside source files. There's no `dist/` folder.
+The source code is copied to `publish/`, then Rollup writes its output files to
+it, then Typescript writes .d.ts files to it, and lastly non-`index.d.ts` files
+are removed.
 
 ```
 npm run build
-npm run clean:all
 ```
 
 ## Feedback

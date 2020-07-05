@@ -6,11 +6,13 @@
 ![badge:npm-license](https://flat.badgen.net/npm/license/sinuous-lifecycle)
 ![badge:npm-types](https://flat.badgen.net/npm/types/sinuous-lifecycle)
 
-Write lifecycles in [Sinuous][1]:
+Write lifecycles in [Sinuous][1].
+
+_/components/YourComponent.tsx_:
 
 ```tsx
 import { h, observable } from 'sinuous';
-import { hooks } from '../hooks.js'; // Explained below
+import { hooks } from '../index.js'; // Optional shorthand notation
 
 const YourComponent = () => {
   const windowSize = observable('');
@@ -26,6 +28,31 @@ const YourComponent = () => {
   });
   return <p>The window's size is <span>{windowSize}</span></p>;
 };
+```
+
+_/index.tsx_:
+
+```tsx
+import { h, api } from 'sinuous';
+import { trace } from 'sinuous-trace';
+import { lifecycle } from 'sinuous-lifecycle';
+
+trace(api);
+lifecycle(api, trace);
+
+const hooks = {
+  onAttach(fn: () => void) { lifecycle.set('onAttach', fn); },
+  onDetach(fn: () => void) { lifecycle.set('onDetach', fn); },
+};
+
+const Page = () =>
+  <main>
+    <YourComponent/>
+  </main>
+
+api.add(document.body, <Page/>);
+
+export { hooks };
 ```
 
 UI libraries that work with the DOM instead of a virtual DOM often don't have a
@@ -55,31 +82,46 @@ Here's how to setup Sinuous for tracing and lifecycles. Run this before using
 any Sinuous calls:
 
 ```ts
-import { api } from 'sinuous'; // 'sinuous/h' if using JSX
+import { api } from 'sinuous';
 import { trace } from 'sinuous-trace';
-import { lifecyclePlugin } from 'sinuous-lifecycle';
+import { lifecycle } from 'sinuous-lifecycle';
 
-const tracers = trace.setup(api);
+// These functions must be run at initialization before Sinuous is called
+trace(api);
 // This wires up onAttach/onDetach to run automatically
-lifecyclePlugin(api, tracers);
+lifecycle(api, trace);
 
-// Export lifecycle setters however you like
+// Optional: Export lifecycle setters however you like
 // Alternatively write directly to the Sinuous API as `api.hooks = {...}`
-export const hooks = {
-  onAttach(callback: () => void): void {
-    lifecyclePlugin.setLifecycle('onAttach', callback);
-  },
-  onDetach(callback: () => void): void {
-    lifecyclePlugin.setLifecycle('onDetach', callback);
-  },
+const hooks = {
+  onAttach(fn: () => void) { lifecycle.setLifecycle('onAttach', fn); },
+  onDetach(fn: () => void) { lifecycle.setLifecycle('onDetach', fn); },
   // Any of your custom lifecycles...
 };
 ```
 
 Note that only onAttach/onDetach run automatically - any custom lifecycles will
-have to have `lifecyclePlugin.callTree()` called as needed. If you write in
-Typescript, use declaration merging (module augmentation) to extend the module's
-`Lifecycle` interface.
+need `lifecycle.callTree()` to run. If you write in Typescript, use declaration
+merging (module augmentation) to extend the module's `Lifecycle` interface.
+
+### Hot Module Reloading
+
+If you're using HMR you must be sure to only run `trace` and `lifecycle` once,
+or you'll receive _"Too much recursion"_ or _"Maximum call stack size exceeded"_
+because the function will call itself instead of Sinuous' API.
+
+```ts
+// In using Parcel/Webpack HMR (or a CodeSandbox)
+if (!window.sinuousSetup) {
+  window.sinuousSetup = true;
+  trace(api);
+  lifecycle(api, trace);
+}
+```
+
+Just mark that you've done the operation so it's not done again. I use `window`
+as an example but it doesn't matter where you store the marker as long as it's
+outside of the module to being hot reloaded.
 
 ## Limitations
 
@@ -101,7 +143,7 @@ run. Instead, either:
 ```tsx
 const renderedApp = <App/>
 document.appendChild(document.querySelector('#root'), renderedApp)
-lifecyclePlugin.callTree('onAttach', renderedApp);
+lifecycle.callTree('onAttach', renderedApp);
 ```
 
 **Use `api.add()`**
@@ -119,16 +161,29 @@ This package includes an optional log package at `sinuous-lifecycle/log`. Here's
 an example to setup the browser console logging, extending the above example.
 
 ```ts
-// ... All imports previously used
-import { logTrace } from 'sinuous-trace/log';
+import { api } from 'sinuous';
+import { trace } from 'sinuous-trace';
+// Optional: Try `logTrace` from sinuous-trace/log too if you'd like both
 import { logLifecycle } from 'sinuous-lifecycle/log';
 
-const tracers = trace.setup(api);
-lifecyclePlugin(api, tracers);
+trace(api);
+lifecycle(api, trace);
+// logTrace(...)
+logLifecycle(trace, lifecycle /*, options: LogLifecycleOptions */);
+```
 
-// Add these lines
-logTrace(api, tracers);
-logLifecycle(lifecyclePlugin);
+> If using HMR you have to make sure this only runs once. This is documented in
+> above in the setup section.
+
+Options: (Defaults shown)
+
+```ts
+const options: LogLifecycleOptions = {
+  consoleStyle: {
+    onAttach: 'background: #A6E2B3', // Green
+    onDetach: 'background: #F4A89A', // Red
+  },
+};
 ```
 
 There's a notable performance hit when the browser console is open, but does
