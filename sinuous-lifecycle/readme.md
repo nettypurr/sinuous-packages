@@ -76,15 +76,17 @@ DOM, providing the onAttach/onDetach lifecycles.
 ## Install
 
 ```
-npm install sinuous-lifecycle
+npm install sinuous-trace sinuous-lifecycle
 ```
 
 Alternatively, in your HTML:
 
 ```html
 <!-- ESM -->
+<script type="module" src="https://unpkg.com/sinuous-trace?module"></script>
 <script type="module" src="https://unpkg.com/sinuous-lifecycle?module"></script>
 <!-- IIFE (For older browsers) -->
+<script src="https://unpkg.com/sinuous-trace/index.min.js"></script>
 <script src="https://unpkg.com/sinuous-lifecycle/index.min.js"></script>
 ```
 
