@@ -4,9 +4,14 @@ import type { HyperscriptApi } from 'sinuous/h';
 import type { Trace, RenderStackFrame, InstanceMeta } from 'sinuous-trace';
 
 type LogTraceOptions = {
+  /** Items to display of an array before saying "...(+N more)" */
   maxArrayItems: number,
+  /** Characters to display of a string before saying "...(+N more)" */
   maxStringLength: number,
-  /** Tag component nodes: `<h1 data-[TAG]="MyComponent"></h1>` */
+  /**
+   * Dataset key for writing the component name into a DOM node
+   * i.e `<h1 data-[componentDatasetTag]="MyComponent"></h1>`
+   * Empty string disables this */
   componentDatasetTag: string,
 }
 

@@ -6,7 +6,8 @@ type LogLifecycleOptions = {
   consoleStyle: LogLifecycleStyle
 }
 
-const defaultOptions: LogLifecycleOptions = {
+// Defaults
+const opts: LogLifecycleOptions = {
   consoleStyle: {
     onAttach: 'background: #A6E2B3', // Green
     onDetach: 'background: #F4A89A', // Red
@@ -21,7 +22,7 @@ function logLifecycle(
   const { callTree } = lifecycle;
 
   const css: LogLifecycleStyle = Object.assign(
-    defaultOptions.consoleStyle,
+    opts.consoleStyle,
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     options.consoleStyle || {}
   );
