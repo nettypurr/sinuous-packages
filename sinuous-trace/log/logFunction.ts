@@ -1,5 +1,5 @@
 import type { Trace } from 'sinuous-trace';
-import type { LogTraceOptions } from './index.js';
+import type { LogTraceOptions } from 'sinuous-trace/log';
 
 // Placeholders to be filled in createLogFunction()
 const ref = {} as {
