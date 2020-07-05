@@ -1,7 +1,5 @@
-import { trace } from 'sinuous-trace';
-import { lifecycle } from 'sinuous-lifecycle';
-
-import type { LifecycleMethods } from 'sinuous-lifecycle';
+import type { Trace } from 'sinuous-trace';
+import type { Lifecycle, LifecycleMethods } from 'sinuous-lifecycle';
 
 type LogLifecycleStyle = { [k in keyof LifecycleMethods]: string }
 type LogLifecycleOptions = {
@@ -15,7 +13,11 @@ const defaultOptions: LogLifecycleOptions = {
   },
 };
 
-function logLifecycle(options: Partial<LogLifecycleOptions> = {}): void {
+function logLifecycle(
+  trace: Trace,
+  lifecycle: Lifecycle,
+  options: Partial<LogLifecycleOptions> = {}
+): void {
   const { callTree } = lifecycle;
 
   const css: LogLifecycleStyle = Object.assign(

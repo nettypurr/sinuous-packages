@@ -1,5 +1,5 @@
-import { api } from 'sinuous';
-import { trace } from 'sinuous-trace';
+import type { HyperscriptApi } from 'sinuous/h';
+import type { Trace } from 'sinuous-trace';
 
 type El = Element | DocumentFragment | Node
 // Use declare merging / module augmentation (seen below) to extend this
@@ -14,15 +14,16 @@ declare module 'sinuous-trace' {
   }
 }
 
+const traceRef = {} as Trace;
 let childAlreadyConnected: boolean | undefined = undefined;
 
-// To support HMR this _has_ to happen outside of the setup function
-const { tracers, stack, meta, tree } = trace;
-const { onAttach, onDetach } = tracers;
-const { add } = api;
-
 /** Wires up onAttach/onDetach lifecycles to run automatically */
-const lifecycle = (): void => {
+const lifecycle = (api: HyperscriptApi, trace: Trace): void => {
+  Object.assign(traceRef, trace);
+  const { tracers } = traceRef;
+  const { onAttach, onDetach } = tracers;
+  const { add } = api;
+
   // Save state before the tracer runs
   api.add = (parent, child, end) => {
     childAlreadyConnected = (child as Node).isConnected;
@@ -43,11 +44,11 @@ const lifecycle = (): void => {
 
 /** Recursively run the lifecycles of a component and its children */
 lifecycle.callTree = (fn: keyof LifecycleMethods, root: El) => {
-  const instance = meta.get(root);
+  const meta = traceRef.meta.get(root);
   // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-  const call = instance && instance.lifecycle && instance.lifecycle[fn];
+  const call = meta && meta.lifecycle && meta.lifecycle[fn];
   if (call) call();
-  const children = tree.get(root);
+  const children = traceRef.tree.get(root);
   if (children && children.size > 0)
     children.forEach(c => lifecycle.callTree(fn, c));
   // Note this is depth-first traversal
@@ -56,10 +57,11 @@ lifecycle.callTree = (fn: keyof LifecycleMethods, root: El) => {
 /** Bind the lifecycle function into the actively rendering component */
 lifecycle.set = (fn: keyof LifecycleMethods, callback: () => void) => {
   // Throws if there's no component rendering (stack empty)
-  const rsf = stack[stack.length - 1];
+  const rsf = traceRef.stack[traceRef.stack.length - 1];
   if (!rsf.lifecycle) rsf.lifecycle = {};
   rsf.lifecycle[fn] = callback;
 };
 
-export { LifecycleMethods }; // Types
+type Lifecycle = typeof lifecycle;
+export { LifecycleMethods, Lifecycle }; // Types
 export { lifecycle };

@@ -1,8 +1,7 @@
-import { api } from 'sinuous';
-import { trace } from 'sinuous-trace';
 import { createLogFunction } from './logFunction.js';
 
-import type { RenderStackFrame, InstanceMeta } from 'sinuous-trace';
+import type { HyperscriptApi } from 'sinuous/h';
+import type { Trace, RenderStackFrame, InstanceMeta } from 'sinuous-trace';
 
 type LogTraceOptions = {
   maxArrayItems: number,
@@ -11,7 +10,7 @@ type LogTraceOptions = {
   componentDatasetTag: string,
 }
 
-const defaultOptions: LogTraceOptions = {
+const opts: LogTraceOptions = {
   maxArrayItems: 3,
   maxStringLength: 10,
   componentDatasetTag: 'component',
@@ -20,13 +19,20 @@ const defaultOptions: LogTraceOptions = {
 let refRSF: RenderStackFrame | undefined;
 let initialParentDuringAdd: Element | DocumentFragment | Node | undefined;
 
-function logTrace(options: Partial<LogTraceOptions> = {}): void {
+function logTrace(
+  api: HyperscriptApi,
+  trace: Trace,
+  options: Partial<LogTraceOptions> = {}
+): void {
   const { tracers } = trace;
   const { onCreate, onAttach, onDetach } = tracers;
   const { h, add, insert, property, rm } = api;
 
-  const opts: LogTraceOptions = Object.assign(defaultOptions, options);
-  const log = createLogFunction(opts);
+  // Assume they'll have Object.assign. It's 2020.
+  Object.assign(opts, options);
+  // for (const k in options) opts[k] = options[k];
+
+  const log = createLogFunction(trace, opts);
 
   const tag = (el: HTMLElement, name: string) =>
     el.dataset[opts.componentDatasetTag] = name;

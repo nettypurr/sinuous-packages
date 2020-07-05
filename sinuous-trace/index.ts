@@ -1,4 +1,4 @@
-import { api } from 'sinuous';
+import { HyperscriptApi } from 'sinuous/h';
 
 // Must be an interface; type doesn't work for module augmentation
 interface RenderStackFrame { name: string }
@@ -26,13 +26,13 @@ const tracers = {
   onDetach: emptyFn as (parent: El, child: El) => void,
 };
 
-// Save previous API values
-const { h, add, rm } = api;
-
-const trace = (): void => {
-  api.h = hTracer;
-  api.add = addTracer;
-  api.rm = rmTracer;
+const apiRef = {} as HyperscriptApi;
+/** Start tracing by modifying the Sinuous API */
+const trace = (api: HyperscriptApi): void => {
+  Object.assign(apiRef, api);
+  api.h = h;
+  api.add = add;
+  api.rm = rm;
 };
 trace.tracers = tracers;
 trace.stack = stack;
@@ -51,16 +51,16 @@ const searchForAdoptiveParent = (start: El) => {
   return document.body;
 };
 
-const hTracer: typeof api.h = (...args) => {
+const h: typeof apiRef.h = (...args) => {
   const fn = args[0] as () => El;
   if (typeof fn !== 'function') {
-    const retH = h(...args);
+    const retH = apiRef.h(...args);
     if (retH instanceof DocumentFragment) refDF.push(retH);
     return retH;
   }
   const renderData = { name: fn.name } as RenderStackFrame;
   stack.push(renderData);
-  const el = h(...args);
+  const el = apiRef.h(...args);
   stack.pop();
 
   // Not Element or DocumentFragment
@@ -79,8 +79,8 @@ const hTracer: typeof api.h = (...args) => {
 // Sinuous' api.add isn't purely a subcall of api.h. If given an array, it will
 // call api.h again to create a fragment (never returned). To see the fragment
 // here, tracer.h sets refDF. It's empty since insertBefore() clears child nodes
-const addTracer: typeof api.add = (parent: El, value: El, endMark) => {
-  const ret = add(parent, value, endMark);
+const add: typeof apiRef.add = (parent: El, value: El, endMark) => {
+  const ret = apiRef.add(parent, value, endMark);
   if (Array.isArray(value) && refDF.length)
     value = refDF.pop() as DocumentFragment;
   if (!(value instanceof Node)) {
@@ -119,7 +119,7 @@ const addTracer: typeof api.add = (parent: El, value: El, endMark) => {
   return ret;
 };
 
-const rmTracer: typeof api.rm = (parent, start, end) => {
+const rm: typeof apiRef.rm = (parent, start, end) => {
   // Parent registered in the tree is possibly different than the DOM parent
   const treeParent = searchForAdoptiveParent(start);
   const children = tree.get(treeParent);
@@ -128,8 +128,9 @@ const rmTracer: typeof api.rm = (parent, start, end) => {
       children.delete(c);
       tracers.onDetach(treeParent, c);
     }
-  return rm(parent, start, end);
+  return apiRef.rm(parent, start, end);
 };
 
-export { RenderStackFrame, InstanceMeta }; // Types
+type Trace = typeof trace;
+export { RenderStackFrame, InstanceMeta, Trace }; // Types
 export { trace };

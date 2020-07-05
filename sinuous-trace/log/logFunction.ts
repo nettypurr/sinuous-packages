@@ -1,33 +1,43 @@
-import { trace } from 'sinuous-trace';
+import type { Trace } from 'sinuous-trace';
 import type { LogTraceOptions } from './index.js';
 
-const opts = {} as LogTraceOptions;
+// Placeholders to be filled in createLogFunction()
+const ref = {} as {
+  trace: Pick<Trace, 'meta' | 'tree'>
+  options: LogTraceOptions
+};
+
+// If log() called inside log()
+let subcall = false;
 
 const limitedList = (head: string, children: unknown[]) => {
   let tail = '';
-  const extra = children.length - opts.maxArrayItems;
+  const extra = children.length - ref.options.maxArrayItems;
   if (extra > 0) {
     tail = `,(...+${extra} items)`;
-    children = children.slice(0, opts.maxArrayItems);
+    children = children.slice(0, ref.options.maxArrayItems);
   }
-  return `${head}[${children.map(n => log(n, true)).join(',')}${tail}]`;
+  subcall = true;
+  const str = `${head}[${children.map(log).join(',')}${tail}]`;
+  subcall = false;
+  return str;
 };
 
 const limitedString = (str: string) => {
   str = str.trim();
-  const extra = str.length - opts.maxStringLength;
+  const extra = str.length - ref.options.maxStringLength;
   return extra > 0
-    ? `"${str.slice(0, opts.maxStringLength)}(...+${extra} chars)"`
+    ? `"${str.slice(0, ref.options.maxStringLength)}(...+${extra} chars)"`
     : `"${str}"`;
 };
 
 // Props and attributes are not currently serialized
 const serializeNode = (node: Node) => {
-  const isComp = trace.meta.get(node);
+  const isComp = ref.trace.meta.get(node);
   if (isComp)
     return `<${isComp.name}/>`;
 
-  const isGuard = trace.tree.get(node);
+  const isGuard = ref.trace.tree.get(node);
   const elName = node instanceof Element
     ? `<${node.tagName.toLowerCase()}>`
     : '[Fragment]';
@@ -37,7 +47,7 @@ const serializeNode = (node: Node) => {
 };
 
 /** Return a pretty printed string for debugging */
-const log = (x: unknown, subcall?: boolean): string => {
+const log = (x: unknown): string => {
   if (Array.isArray(x)) {
     return subcall
       ? 'Array[...]'
@@ -81,9 +91,11 @@ const log = (x: unknown, subcall?: boolean): string => {
     : limitedString(str);
 };
 
-const createLogFunction = (options: LogTraceOptions): typeof log => {
-  Object.assign(opts, options);
-  // TODO: Return a function that sets/restores a `subcall` global
+const createLogFunction = (trace: Trace, options: LogTraceOptions): typeof log => {
+  ref.trace = trace;
+  ref.options = options;
+  // TODO:
+  // Object.assign(ref, { trace, options });
   return log;
 };
 
