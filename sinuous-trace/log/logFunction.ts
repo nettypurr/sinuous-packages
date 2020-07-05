@@ -3,8 +3,8 @@ import type { LogTraceOptions } from './index.js';
 
 // Placeholders to be filled in createLogFunction()
 const ref = {} as {
-  trace: Pick<Trace, 'meta' | 'tree'>
-  options: LogTraceOptions
+  trace: Trace,
+  options: LogTraceOptions,
 };
 
 // If log() called inside log()
