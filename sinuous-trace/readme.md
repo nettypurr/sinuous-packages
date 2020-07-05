@@ -10,6 +10,21 @@ This library traces the [Sinuous][1] API to record component creation, adoption,
 and removal. This forms a component tree stored in a `WeakMap` of all live
 components.
 
+## Install
+
+```
+npm install sinuous-trace
+```
+
+Alternatively, in your HTML:
+
+```html
+<!-- ESM -->
+<script type="module" src="https://unpkg.com/sinuous-trace?module"></script>
+<!-- IIFE (For older browsers) -->
+<script src="https://unpkg.com/sinuous-trace/index.min.js"></script>
+```
+
 ## Setup
 
 You extend the Sinuous API yourself when initializing your application. This is

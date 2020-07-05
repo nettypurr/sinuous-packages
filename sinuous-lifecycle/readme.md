@@ -73,6 +73,21 @@ hold all component relations. This means `sinuous-lifecycle` can plug into those
 events and check whether the parent/child will change their connection to the
 DOM, providing the onAttach/onDetach lifecycles.
 
+## Install
+
+```
+npm install sinuous-lifecycle
+```
+
+Alternatively, in your HTML:
+
+```html
+<!-- ESM -->
+<script type="module" src="https://unpkg.com/sinuous-lifecycle?module"></script>
+<!-- IIFE (For older browsers) -->
+<script src="https://unpkg.com/sinuous-lifecycle/index.min.js"></script>
+```
+
 ## Setup
 
 You extend the Sinuous API yourself when initializing your application. This is

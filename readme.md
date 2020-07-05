@@ -18,8 +18,8 @@ Directly in your HTML:
 
 ```html
 <!-- ESM -->
-<script type="module" src="https://unpkg.com/sinuous-trace/index.js"></script>
-<script type="module" src="https://unpkg.com/sinuous-lifecycle/index.js"></script>
+<script type="module" src="https://unpkg.com/sinuous-trace?module"></script>
+<script type="module" src="https://unpkg.com/sinuous-lifecycle?module"></script>
 
 <!-- IIFE (For older browsers) -->
 <script src="https://unpkg.com/sinuous-trace/index.min.js"></script>
