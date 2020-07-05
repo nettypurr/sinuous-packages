@@ -43,7 +43,7 @@ const hydrateBundleSnippet = (input, format) => {
       }),
     ],
     output: {
-      file: `${input}/index.${extension}`,
+      file: `publish/${input}/index.${extension}`,
       format,
       name,
       sourcemap: true,

@@ -10,17 +10,15 @@
   },
   "author": "Gen Hames",
   "scripts": {
-    "build": "npm run rollup && npm run dts",
+    "build": "cp -r sinuous-* publish/ && npm run rollup && npm run dts",
     "rollup": "rollup --config rollup.js --silent",
-    "dts": "npm run clean:dts && tsc && npm run dts:rm-extras",
-    "dts:rm-extras": "bash -c 'rm -v $(find sinuous-* -name '*.d.ts' | grep -v index.d.ts) || true'",
-    "clean:dts": "bash -c 'rm -v sinuous-*/{,**/}*.d.ts || true'",
-    "clean:all": "bash -c 'rm -v sinuous-*/{,**/}*.{d.ts,min.js,js,map} || true'"
+    "dts": "tsc && npm run dts:rm-extras",
+    "dts:rm-extras": "bash -c 'rm -v $(find publish -name '*.d.ts' | grep -v index.d.ts) || true'"
   },
   "dependencies": {
     "sinuous": "^0.27.6",
-    "sinuous-trace": "file:sinuous-trace",
-    "sinuous-lifecycle": "file:sinuous-lifecycle"
+    "sinuous-trace": "file:publish/sinuous-trace",
+    "sinuous-lifecycle": "file:publish/sinuous-lifecycle"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
