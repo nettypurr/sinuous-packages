@@ -144,6 +144,8 @@ const options: LogTraceOptions = {
   maxArrayItems: 3,
   // Characters to display of a string before saying "...(+N more)"
   maxStringLength: 10,
+  // Skip logging for any of h/add/insert/property/rm/on{Create,Attach,Detach}
+  skipMethods: [],
   // Dataset key for writing the component name into a DOM node
   // i.e `<h1 data-[componentDatasetTag]="MyComponent"></h1>`
   // Empty string disables this
