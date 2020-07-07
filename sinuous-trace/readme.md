@@ -144,13 +144,28 @@ const options: LogTraceOptions = {
   maxArrayItems: 3,
   // Characters to display of a string before saying "...(+N more)"
   maxStringLength: 10,
-  // Skip logging for any of h/add/insert/property/rm/on{Create,Attach,Detach}
-  skipMethods: [],
   // Dataset key for writing the component name into a DOM node
   // i.e `<h1 data-[componentDatasetTag]="MyComponent"></h1>`
   // Empty string disables this
   componentDatasetTag: 'component',
 };
+```
+
+If you'd like to only have _some_ methods logged you can save the previous
+values of `api` and `trace.tracers` _before_ the overwrite and then restore:
+
+This example only shows logging for `api.h` and `trace.tracers.onCreate`:
+
+```ts
+trace(api);
+// Save these
+const { add, insert, property, rm } = api;
+const { onAttach, onDetach } = trace.tracers;
+// Overwrite
+logTrace(api, trace);
+// Restore the overwritten functions to their original values
+Object.assign(api, { add, insert, property, rm });
+Object.assign(trace.tracers, { onAttach, onDetach });
 ```
 
 [1]: https://sinuous.dev
