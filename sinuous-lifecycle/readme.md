@@ -111,8 +111,8 @@ lifecycle(api, trace);
 // Optional: Export lifecycle setters however you like
 // Alternatively write directly to the Sinuous API as `api.hooks = {...}`
 const hooks = {
-  onAttach(fn: () => void) { lifecycle.setLifecycle('onAttach', fn); },
-  onDetach(fn: () => void) { lifecycle.setLifecycle('onDetach', fn); },
+  onAttach(fn: () => void) { lifecycle.set('onAttach', fn); },
+  onDetach(fn: () => void) { lifecycle.set('onDetach', fn); },
   // Any of your custom lifecycles...
 };
 ```
