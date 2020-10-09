@@ -1,7 +1,16 @@
-import type { HyperscriptApi } from 'sinuous/h';
 import type { Trace } from 'sinuous-trace';
 
-type El = Element | DocumentFragment | Node
+// This supports any Sinuous-like API
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type API = {
+  h: (...args: any[]) => unknown;
+  add: (parent: Node, value: any, endMark?: Node) => unknown;
+  insert: (el: Node, value: any, endMark?: Node, current?: any, startNode?: any) => unknown;
+  property: (el: Node, value: any, name: string | null, isAttr?: boolean, isCss?: boolean) => void;
+  rm: (parent: Node, startNode: any, endMark: Node) => void;
+}
+
+type El = Element | Node | DocumentFragment
 // Use declare merging / module augmentation (seen below) to extend this
 interface LifecycleMethods {
   onAttach: () => void
@@ -18,7 +27,7 @@ const traceRef = {} as Trace;
 let childAlreadyConnected: boolean | undefined = undefined;
 
 /** Wires up onAttach/onDetach lifecycles to run automatically */
-const lifecycle = (api: HyperscriptApi, trace: Trace): void => {
+const lifecycle = (api: API, trace: Trace): void => {
   Object.assign(traceRef, trace);
   const { tracers } = traceRef;
   const { onAttach, onDetach } = tracers;

@@ -1,6 +1,6 @@
 import { createLogFunction } from './logFunction.js';
 
-import type { HyperscriptApi } from 'sinuous/h';
+import type { API } from '../index.js';
 import type { Trace, RenderStackFrame, InstanceMeta } from 'sinuous-trace';
 
 type LogTraceOptions = {
@@ -25,7 +25,7 @@ let refRSF: RenderStackFrame | undefined;
 let initialParentDuringAdd: Element | DocumentFragment | Node | undefined;
 
 function logTrace(
-  api: HyperscriptApi,
+  api: API,
   trace: Trace,
   options: Partial<LogTraceOptions> = {}
 ): void {
@@ -44,10 +44,10 @@ function logTrace(
 
   api.h = (fn, ...args) => {
     if (typeof fn === 'function') {
-      console.group(`api.h() 🔶 ${fn.name}`);
+      console.group(`api.h() 🔶 ${(fn as () => unknown).name}`);
       // During this h() the tracer will run and save the RSF
       const retH = h(fn, ...args);
-      console.log(`${fn.name}: Done. Render data:`, refRSF);
+      console.log(`${(fn as () => unknown).name}: Done. Render data:`, refRSF);
       console.groupEnd();
       return retH;
     }

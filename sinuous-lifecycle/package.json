@@ -3,17 +3,16 @@
   "version": "2.0.1",
   "description": "Sinuous onAttach/onDetach DOM lifecycles",
   "keywords": [],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "author": "Gen Hames",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-lifecycle"
   },
-  "author": "Gen Hames",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "type": "module",
   "peerDependencies": {
-    "sinuous": "^0.27.6",
     "sinuous-trace": "^2.0.0"
   }
 }

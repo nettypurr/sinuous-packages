@@ -1,14 +1,14 @@
 {
   "name": "sinuous-packages",
   "version": "0.0.0",
-  "description": "Packages for Sinuous",
+  "description": "Packages for Sinuous and other API-compatible libraries",
   "keywords": [],
+  "author": "Gen Hames",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/nthm/sinuous-packages"
   },
-  "author": "Gen Hames",
   "scripts": {
     "build": "cp -r sinuous-* publish/ && npm run rollup && npm run dts",
     "rollup": "rollup --config rollup.js --silent",
@@ -16,7 +16,6 @@
     "dts:rm-extras": "bash -c 'rm -v $(find publish -name '*.d.ts' | grep -v index.d.ts) || true'"
   },
   "dependencies": {
-    "sinuous": "^0.27.6",
     "sinuous-trace": "file:publish/sinuous-trace",
     "sinuous-lifecycle": "file:publish/sinuous-lifecycle"
   },

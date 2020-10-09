@@ -3,16 +3,13 @@
   "version": "2.2.0",
   "description": "Trace components from Sinuous into a WeakMap tree",
   "keywords": [],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "author": "Gen Hames",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-trace"
-  },
-  "author": "Gen Hames",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "type": "module",
-  "peerDependencies": {
-    "sinuous": "^0.27.6"
   }
 }
