@@ -1,12 +1,12 @@
 {
   "description": "Lifecycle plugin to log onAttach/onDetach calls",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "author": "Gen Hames",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/nthm/sinuous-packages/-/tree/work/sinuous-lifecycle/log"
-  },
-  "author": "Gen Hames",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "type": "module"
+  }
 }

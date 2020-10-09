@@ -1,6 +1,6 @@
 {
   "name": "sinuous-lifecycle",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Sinuous onAttach/onDetach DOM lifecycles",
   "keywords": [],
   "main": "index.js",

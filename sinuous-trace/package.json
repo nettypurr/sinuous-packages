@@ -1,6 +1,6 @@
 {
   "name": "sinuous-trace",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Trace components from Sinuous into a WeakMap tree",
   "keywords": [],
   "main": "index.js",
